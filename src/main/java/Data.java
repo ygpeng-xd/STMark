@@ -1,6 +1,6 @@
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
-import jdk.internal.org.objectweb.asm.tree.analysis.Value;
+
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -12,18 +12,14 @@ import java.util.Map;
 import java.util.Vector;
 
 public class Data {
-    public static void main(String[] args) throws IOException, CsvValidationException {
-        Data d = new Data("queaterlywages2000.csv");
-        System.out.println(d.dataFre.size());
-    }
     Vector<Vector<Integer>> dataFre;
     Vector<Vector<String>> dataValue;
     int All_size = 0;
 
     /**
-     * txt读取频率直方图
-     * @param filePath  路径
-     * @param cls 从什么文件中读入（频率直方图）
+     * read frequency data
+     * @param filePath  path
+     * @param cls frequency form
      */
     public Data(String filePath, int cls) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
@@ -42,6 +38,11 @@ public class Data {
         dataValue.add(Valuetmp);
     }
 
+
+    /**
+     * read data and organize it into frequency form
+     * @param filePath  path
+     */
     public Data(String filePath) throws IOException, CsvValidationException {
         Reader reader = Files.newBufferedReader(Paths.get(filePath), Charset.forName("ISO-8859-1"));
         CSVReader csvReader = new CSVReader(reader);
@@ -78,21 +79,21 @@ public class Data {
         sortVectors();
     }
 
+    /**
+     * Sort by frequency
+     */
     public void sortVectors() {
         for(int m = 0;m<dataFre.size();m++){
             int n = dataFre.get(m).size();
             Integer[] indices = new Integer[n];
 
-            // 初始化索引数组
             for (int i = 0; i < n; i++) {
                 indices[i] = i;
             }
 
-            // 按照 dataFre 的值排序索引数组
             int finalM = m;
             Arrays.sort(indices, (j, i) -> Integer.compare(dataFre.get(finalM).get(i), dataFre.get(finalM).get(j)));
 
-            // 根据排序后的索引重新排列 dataFre 和 dataValue
             Vector<Integer> sortedFre = new Vector<>(n);
             Vector<String> sortedValue = new Vector<>(n);
 
@@ -101,7 +102,7 @@ public class Data {
                 sortedValue.add(dataValue.get(m).get(indices[i]));
             }
 
-            // 更新原始 Vector
+            // Update the original Vector
             dataFre.get(m).clear();
             dataValue.get(m).clear();
             dataFre.get(m).addAll(sortedFre);

@@ -10,45 +10,30 @@ import java.util.stream.Collectors;
 
 public class Watermark {
     int sumLessMedian = 0;
-    int equal0 = 0;
     int all_res = 0;
     int cou1 = 0;
     int cou0 = 0;
     @Test
     public void embeddingWatermark() throws IOException, NoSuchAlgorithmException, CsvValidationException, SQLException {
         //double[] ratios = new double[]{0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.98, 0.99,0.99999};
-        int[] perbs = {1,3,5,7,15,31,63,127,255,511,1023};
+        int[] perbs = {1,3,5,7,15,31,63,127,255,511,1023};//perturbation magnitude in perturbation attack
         // double[] ratios = new double[]{0.2,0.4,0.6,0.8,1.0,1.2,1.4,1.6,1.8,2.0};
         //for(double ratio : ratios){
         for(int perb:perbs){
             for(int c = 0;c<10;c++){
-                //String file = "ne.csv";
-                // String file = "queaterlywages2000.csv";
-                //String file = "geography.csv";
+
+                {//experiments on scalar dataset
+                    //String file = "geography.csv";
+                    //int wlen = 10000;
+                }
                 String file  = "eyewndr.txt";
-                //String file = "data.csv";
+                int wLen = 40;
+                //String file = "Reviews.csv";
                 Data d = new Data(file,1);
-                //String file = "hist_taxi_id.txt";
-                //Data d = new Data(file,1);
+
+
                 String watermark = generateWatermark(40);
 
-                //Vector<Parameters> parameters = genetics.getGene(d,watermark.length());
-        /*Vector<Parameters> parameters = new Vector<>();
-        parameters.add(new Parameters("YYDKDIDXLH",99,50));
-        parameters.add(new Parameters("JIYGCYMNHKVHS",103,50));
-        parameters.add(new Parameters("KNIRKYDNUC",118,50));*/
-
-        /*Vector<Parameters> parameters = new Vector<>();
-        parameters.add(new Parameters("URDHLRBK",99,59));
-        parameters.add(new Parameters("IRVNBLYFHZRHPZ",103,50));
-        parameters.add(new Parameters("CVGBYPNPSCA",118,79));
-        Vector<Vector<Vector<Integer>>> partitions = getAllPartitions(parameters,d,"西电");*/
-
-        /*Vector<Parameters> parameters = new Vector<>();
-        parameters.add(new Parameters("URDHLRBK",53,50));
-        parameters.add(new Parameters("IRVNBLYFHZRHPZ",1378,50));
-        parameters.add(new Parameters("CVGBYPNPSCA",1871,50));
-        Vector<Vector<Vector<Integer>>> partitions = getAllPartitions(parameters,d,"西电");*/
 
                 Vector<Parameters> parameters = new Vector<>();
 
@@ -66,7 +51,7 @@ public class Watermark {
             Vector<Vector<Vector<Integer>>> partitions = getAllPartitions(parameters,d,"西电");*/
 
                 // 分子部分
-                double numeratorInner = 0.5 * (1.0 - Math.sqrt(9.5481 / (40 + 9.5481)));
+                double numeratorInner = 0.5 * (1.0 - Math.sqrt(9.5481 / (wLen + 9.5481)));
                 double numerator = Math.log(numeratorInner); // 以自然对数为底
 
                 // 分母部分（log 的底）

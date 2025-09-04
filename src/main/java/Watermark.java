@@ -14,87 +14,47 @@ public class Watermark {
     int cou1 = 0;
     int cou0 = 0;
     @Test
-    public void embeddingWatermark() throws IOException, NoSuchAlgorithmException, CsvValidationException, SQLException {
-        //double[] ratios = new double[]{0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.98, 0.99,0.99999};
+    public void embeddingWatermarkforEyewndrPerbatationAttack() throws IOException, NoSuchAlgorithmException, CsvValidationException, SQLException {
+
         int[] perbs = {1,3,5,7,15,31,63,127,255,511,1023};//perturbation magnitude in perturbation attack
-        // double[] ratios = new double[]{0.2,0.4,0.6,0.8,1.0,1.2,1.4,1.6,1.8,2.0};
-        //for(double ratio : ratios){
-        for(int perb:perbs){
-            for(int c = 0;c<10;c++){
-
-                {//experiments on scalar dataset
-                    //String file = "geography.csv";
-                    //int wlen = 10000;
-                }
-                String file  = "eyewndr.txt";
-                int wLen = 40;
-                //String file = "Reviews.csv";
-                Data d = new Data(file,1);
-
-
+        for(int ratio:perbs){
+            String file  = "dataset\\eyewndr.txt";
+            int wLen = 40;
+            for(int c = 0;c<10;c++) {
+                Data d = new Data(file, 1);
                 String watermark = generateWatermark(40);
-
-
                 Vector<Parameters> parameters = new Vector<>();
 
-            /*// 分子部分
-            double numeratorInner = 0.5 * (1.0 - Math.sqrt(9.5481 / (1000 + 9.5481)));
-            double numerator = Math.log(numeratorInner); // 以自然对数为底
-
-            // 分母部分（log 的底）
-            double logBase = 1.0 - 1.0 / 1000;
-            double denominator = Math.log(logBase);
-            //换底公式，因为没有办法任意底
-            System.out.println(numerator/denominator);
-
-            parameters.add(new Parameters("jikeyuan", (int) (d.dataValue.get(0).size()/(numerator/denominator)),100));
-            Vector<Vector<Vector<Integer>>> partitions = getAllPartitions(parameters,d,"西电");*/
-
-                // 分子部分
+                // numerator
                 double numeratorInner = 0.5 * (1.0 - Math.sqrt(9.5481 / (wLen + 9.5481)));
-                double numerator = Math.log(numeratorInner); // 以自然对数为底
+                double numerator = Math.log(numeratorInner);
 
-                // 分母部分（log 的底）
-                double logBase = 1.0 - 1.0 / 40;
+                // denominator
+                double logBase = 1.0 - 1.0 / wLen;
                 double denominator = Math.log(logBase);
-                //换底公式，因为没有办法任意底
-                //System.out.println(numerator/denominator);
-                parameters.add(new Parameters("xidian", (int) (d.dataValue.get(0).size()/(numerator/denominator)),100));
-                //parameters.add(new Parameters("jikeyuan", (int) (d.dataValue.get(1).size()/(numerator/denominator)),100));
-                //parameters.add(new Parameters("xidianjikeyuan", (int) (d.dataValue.get(2).size()/(numerator/denominator)),100));
-                Vector<Vector<Vector<Integer>>> partitions = getAllPartitions(parameters,d,"西电");
+
+                String Key1 = "xidian";
+                String Key2 = "西电";
+
+                {//for eyewndr dataset
+                    parameters.add(new Parameters(Key1, (int) (d.dataValue.get(0).size() / (numerator / denominator)), 100));
+                }
+
+                //data partition
+                Vector<Vector<Vector<Integer>>> partitions = getAllPartitions(parameters,d,Key2);
 
                 int totalGroups = 0;
                 for(int i = 0;i<parameters.size();i++){
                     totalGroups+=parameters.get(i).getM();
                 }
 
-
                 Vector<StringBuffer> Code = getAllVeri(totalGroups,partitions,parameters,d,watermark);
 
-                //System.out.println(Math.abs(cou1-cou0)/(cou0+cou1));
-                //attack.decreaseRatio(d,0.9);
-                //attack.decreaseRatio1(d,ratio);
-                //attack.attackNoOrder(d,0.00000000000000001);
-                //attack.sampleRatio(d,ratio);
-                //d = attack.alterFreAttackwithOutSQL(d);
-                //d = attack.alterRandomAttackwithOutSQL(d);
-                // d= attack.alterRandomAttackwithOutSQL(d,0.6);
-                attack.perbAttack(d,perb);
-        /*{//非频率数据
-            attack.deleteAttackwithOutSQL(file);
-            d = new Data("attacked database\\attack"+file);
-        }*/
-                /*{//频率数据
-                    //attack.alterRandomAttackwithOutSQL(file,d);
-                    attack.deleteAttackwithOutSQL(file,d,ratio);
+                attack.perbAttack(d,ratio);//frequency perturbation attack
 
-                    d = new Data("attacked database\\attack"+file);
-                }*/
-
-                String result = decodeWatermark(d,"西电",parameters,Code,watermark.length());
+                String result = decodeWatermark(d,Key2,parameters,Code,watermark.length());
                 if(result.equals(watermark)){
-                    System.out.println("一致");
+                    System.out.println("success");
                 }
 
                 int count = 0;
@@ -107,11 +67,197 @@ public class Watermark {
                 all_res+=count;
                 System.out.println(count);
             }
-            System.out.println("攻击比例" + perb + "最终结果="+all_res/400.0);
+            System.out.println("attack ratio" + ratio + "WMR="+all_res/(wLen*10.0));
             all_res = 0;
 
         }
+    }
+
+    @Test
+    public void embeddingWatermarkforEyewndrScalingAttack() throws IOException, NoSuchAlgorithmException, CsvValidationException, SQLException {
+        double[] ratios = new double[]{0.2,0.4,0.6,0.8,1.0,1.2,1.4,1.6,1.8,2.0};
+        for(double ratio : ratios){
+            String file  = "dataset\\eyewndr.txt";
+            int wLen = 40;
+            for(int c = 0;c<10;c++) {
+                Data d = new Data(file, 1);
+                String watermark = generateWatermark(40);
+                Vector<Parameters> parameters = new Vector<>();
+
+                // numerator
+                double numeratorInner = 0.5 * (1.0 - Math.sqrt(9.5481 / (wLen + 9.5481)));
+                double numerator = Math.log(numeratorInner);
+
+                // denominator
+                double logBase = 1.0 - 1.0 / wLen;
+                double denominator = Math.log(logBase);
+
+                String Key1 = "xidian";
+                String Key2 = "西电";
+
+                {//for eyewndr dataset
+                    parameters.add(new Parameters(Key1, (int) (d.dataValue.get(0).size() / (numerator / denominator)), 100));
+                }
+
+                //data partition
+                Vector<Vector<Vector<Integer>>> partitions = getAllPartitions(parameters,d,Key2);
+
+                int totalGroups = 0;
+                for(int i = 0;i<parameters.size();i++){
+                    totalGroups+=parameters.get(i).getM();
+                }
+
+                Vector<StringBuffer> Code = getAllVeri(totalGroups,partitions,parameters,d,watermark);
+
+                attack.scalingAttack(d,ratio);//scaling attack
+
+                String result = decodeWatermark(d,Key2,parameters,Code,watermark.length());
+                if(result.equals(watermark)){
+                    System.out.println("success");
+                }
+
+                int count = 0;
+                for(int i = 0;i<40;i++){
+                    if(result.charAt(i) == watermark.charAt(i)){
+                        count++;
+                    }
+                }
+
+                all_res+=count;
+                System.out.println(count);
+            }
+            System.out.println("attack ratio" + ratio + "WMR="+all_res/(wLen*10.0));
+            all_res = 0;
+
         }
+    }
+
+    public void embeddingWatermarkforDeletionAttack() throws IOException, NoSuchAlgorithmException, CsvValidationException, SQLException {
+        double[] ratios = new double[]{0.1,0.2,0.3,0.4,0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.98, 0.99,0.99999};
+        for(double ratio : ratios){
+            String fileName = "eyewndr.txt";
+            String file  = "dataset\\eyewndr.txt";
+            int wLen = 40;
+            for(int c = 0;c<10;c++) {
+                Data d = new Data(file, 1);
+                String watermark = generateWatermark(40);
+                Vector<Parameters> parameters = new Vector<>();
+
+                // numerator
+                double numeratorInner = 0.5 * (1.0 - Math.sqrt(9.5481 / (wLen + 9.5481)));
+                double numerator = Math.log(numeratorInner);
+
+                // denominator
+                double logBase = 1.0 - 1.0 / wLen;
+                double denominator = Math.log(logBase);
+
+                String Key1 = "xidian";
+                String Key2 = "西电";
+
+                {//for eyewndr dataset
+                    parameters.add(new Parameters(Key1, (int) (d.dataValue.get(0).size() / (numerator / denominator)), 100));
+                }
+
+                //data partition
+                Vector<Vector<Vector<Integer>>> partitions = getAllPartitions(parameters,d,Key2);
+
+                int totalGroups = 0;
+                for(int i = 0;i<parameters.size();i++){
+                    totalGroups+=parameters.get(i).getM();
+                }
+
+                Vector<StringBuffer> Code = getAllVeri(totalGroups,partitions,parameters,d,watermark);
+
+                {
+                    attack.deleteAttackwithOutSQL(fileName,d,ratio);
+                    d = new Data("attacked dataset\\attack"+fileName);
+                }
+
+                String result = decodeWatermark(d,Key2,parameters,Code,watermark.length());
+                if(result.equals(watermark)){
+                    System.out.println("success");
+                }
+
+
+
+                int count = 0;
+                for(int i = 0;i<40;i++){
+                    if(result.charAt(i) == watermark.charAt(i)){
+                        count++;
+                    }
+                }
+
+                all_res+=count;
+                System.out.println(count);
+            }
+            System.out.println("attack ratio" + ratio + "WMR="+all_res/(wLen*10.0));
+            all_res = 0;
+
+        }
+    }
+
+    public void embeddingWatermarkforValueReplacement() throws IOException, NoSuchAlgorithmException, CsvValidationException, SQLException {
+        double[] ratios = new double[]{0.1,0.2,0.3,0.4,0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.98, 0.99,0.99999};
+        for(double ratio : ratios){
+            String fileName = "eyewndr.txt";
+            String file  = "dataset\\eyewndr.txt";
+            int wLen = 40;
+            for(int c = 0;c<10;c++) {
+                Data d = new Data(file, 1);
+                String watermark = generateWatermark(40);
+                Vector<Parameters> parameters = new Vector<>();
+
+                // numerator
+                double numeratorInner = 0.5 * (1.0 - Math.sqrt(9.5481 / (wLen + 9.5481)));
+                double numerator = Math.log(numeratorInner);
+
+                // denominator
+                double logBase = 1.0 - 1.0 / wLen;
+                double denominator = Math.log(logBase);
+
+                String Key1 = "xidian";
+                String Key2 = "西电";
+
+                {//for eyewndr dataset
+                    parameters.add(new Parameters(Key1, (int) (d.dataValue.get(0).size() / (numerator / denominator)), 100));
+                }
+
+                //data partition
+                Vector<Vector<Vector<Integer>>> partitions = getAllPartitions(parameters,d,Key2);
+
+                int totalGroups = 0;
+                for(int i = 0;i<parameters.size();i++){
+                    totalGroups+=parameters.get(i).getM();
+                }
+
+                Vector<StringBuffer> Code = getAllVeri(totalGroups,partitions,parameters,d,watermark);
+
+                {
+                    d= attack.alterRandomAttackwithOutSQL(d,ratio);
+                }
+
+                String result = decodeWatermark(d,Key2,parameters,Code,watermark.length());
+                if(result.equals(watermark)){
+                    System.out.println("success");
+                }
+
+
+
+                int count = 0;
+                for(int i = 0;i<40;i++){
+                    if(result.charAt(i) == watermark.charAt(i)){
+                        count++;
+                    }
+                }
+
+                all_res+=count;
+                System.out.println(count);
+            }
+            System.out.println("attack ratio" + ratio + "WMR="+all_res/(wLen*10.0));
+            all_res = 0;
+
+        }
+    }
 
 
 /**

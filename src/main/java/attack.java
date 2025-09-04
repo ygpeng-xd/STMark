@@ -76,7 +76,7 @@ public class attack {
             }
         }
 
-        Util.toCsv("attacked database\\" + "attack" + databaseName,datatmp);
+        Util.toCsv("attacked dataset\\" + "attack" + databaseName,datatmp);
     }
 
     public static void deleteAttackwithOutSQL(String databaseName, Data data,double ratio) throws SQLException, CsvValidationException, IOException {
@@ -91,19 +91,11 @@ public class attack {
             }
         }
 
-        Util.toCsv("attacked database\\" + "attack" + databaseName,datatmp);
-    }
-
-    public static void decreaseRatio(Data d,double ratio){//攻击比例
-        for(int i = 0;i<d.dataFre.size();i++){
-            for(int j = 0;j<d.dataFre.get(i).size();j++){
-                d.dataFre.get(i).set(j, (int) (d.dataFre.get(i).get(j)*ratio));
-            }
-        }
+        Util.toCsv("attacked dataset\\" + "attack" + databaseName,datatmp);
     }
 
 
-    public static void decreaseRatio1(Data d,double ratio){//攻击比例
+    public static void scalingAttack(Data d,double ratio){//攻击比例
         for(int i = 0;i<d.dataFre.size();i++){
             for(int j = 0;j<d.dataFre.get(i).size();j++){
                 d.dataFre.get(i).set(j, (int) (Math.round(d.dataFre.get(i).get(j)*ratio)));

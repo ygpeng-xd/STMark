@@ -11,7 +11,14 @@ public class test {
         Watermark wm = new Watermark();
         //wm.embeddingWatermarkforEyewndrPerbatationAttack();//frequency perturbation attack
         //wm.embeddingWatermarkforEyewndrScalingAttack();//scaling attack
-        //wm.embeddingWatermarkforDeletionAttack();//deletion attack
-        wm.embeddingWatermarkforValueReplacement();//Value Repalce Attack
+        wm.embeddingWatermarkforEyewndrDeletionAttack();//deletion attack
+        //wm.embeddingWatermarkforEyewndrValueReplacement();//Value Repalce Attack
+    }
+
+    @Test
+    public void test_geographic() throws CsvValidationException, SQLException, IOException, NoSuchAlgorithmException {
+        Watermark wm = new Watermark();
+        //wm.embeddingWatermarkforGeographicDeletionAttack();//deletion attack
+        wm.embeddingWatermarkforGeographicRandomAlterationAttack();//Random Alteration Attack,
     }
 }

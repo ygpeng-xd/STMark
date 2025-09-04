@@ -129,7 +129,7 @@ public class attack {
         Util.toCsv("attacked database\\" + "attack" + databaseName,d);
     }
 
-    public static Data alterFreAttackwithOutSQL(Data d) throws SQLException, CsvValidationException, IOException {
+    public static Data alterFreAttackwithOutSQL(Data d,double ratio) throws SQLException, CsvValidationException, IOException {
         Random rand = new Random();
         double r = 0.99;
         d.sortVectors();
@@ -147,18 +147,6 @@ public class attack {
         return d;
     }
 
-    /*public static Data alterRandomAttackwithOutSQL(Data d) throws SQLException, CsvValidationException, IOException {
-        Random rand = new Random();
-        double r = 0.01;
-        d.sortVectors();
-        HashSet<Integer> set = select_value(d,0);
-        for(int i:set){
-            d.dataValue.get(0).set(i,Util.getRandomAlphaString(4+rand.nextInt(6)));
-        }
-
-
-        return d;
-    }*/
 
     public static Data perbAttack(Data d,Integer perb) throws SQLException, CsvValidationException, IOException {
         Random rand = new Random();
@@ -194,20 +182,6 @@ public class attack {
 
         }
         return d;
-    }
-
-    public static void attackNoOrder(Data d,double ratio){//攻击比例
-        for(int i = 0;i<d.dataFre.size();i++){
-            for(int j = 0;j<d.dataFre.get(i).size();j++){
-                Random random = new Random();
-                if(random.nextInt(2)==1){
-                    d.dataFre.get(i).set(j, (int) (d.dataFre.get(i).get(j)*ratio));
-                }
-                else{
-                    d.dataFre.get(i).set(j, (int) (d.dataFre.get(i).get(j)*(2-ratio)));
-                }
-            }
-        }
     }
 }
 

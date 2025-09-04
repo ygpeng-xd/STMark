@@ -1,5 +1,6 @@
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
+import net.didion.jwnl.JWNLException;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -183,6 +184,93 @@ public class attack {
         }
         return d;
     }
+
+    public static void altAttackwithPK(Data data,String databaseName,double rate) throws SQLException, CsvValidationException, IOException {
+        ModifiedData d = new ModifiedData(data);//read in data
+        HashSet<Integer> set = select_tuple(d,1-rate);//The tuples to be modified
+        Random random = new Random();
+        for(int i : set){
+            d.d.get(2).set(i, String.valueOf(random.nextInt(1000000000)));
+
+        }
+        Util.toCsv("attacked database\\" + "attack" + databaseName,d);
+        return;
+    }
+
+    public static void altAttackwithPK1(Data data,String databaseName,double rate) throws SQLException, CsvValidationException, IOException {
+        ModifiedData d = new ModifiedData(data);//read in data
+        HashSet<Integer> set = select_tuple(d,1-rate);//The tuples to be modified
+        Random random = new Random();
+        for(int i : set){
+            d.d.get(0).set(i,Util.getRandomAlphaString(10));
+            d.d.get(1).set(i,Util.getRandomAlphaString(10));
+            d.d.get(2).set(i,Util.getRandomAlphaString(10));
+        }
+        Util.toCsv("attacked dataset\\" + "attack" + databaseName,d);
+        return;
+    }
+
+    static HashSet<Integer> select_insetred_tuple(ModifiedData d){
+        //In deletion attacks, the proportion indicated for deletion in the deletion attack,
+        //In modification attacks, the proportion indicated for not modified in the modification attack
+        double rate = 1.0;
+
+        //tuple_num is the number of tuples retained in the deletion attack and the number of tuples modified in the modification attack.
+        int tuple_num = (int)(rate*50000);
+
+        HashSet<Integer> set = new HashSet<>();
+        Random random = new Random();
+        while(set.size()<tuple_num){
+            int temp = 50000+random.nextInt(d.d.get(0).size()-50000);
+            set.add(temp);
+        }
+        return set;
+    }
+
+
+
+
+    public static void insertAttackWithoutSQL(String databaseName,double rate) throws SQLException, CsvValidationException, IOException {
+        ModifiedData d = new ModifiedData("dataset\\"+databaseName,'a',1);//read in data
+        int tmp = (int)(50000 * rate);//The number of tuples to be inserted
+
+        ModifiedData datatmp = new ModifiedData(d.d.size(),d.d.get(0).size()+tmp);
+        Random random = new Random();
+
+
+
+        for(int i=0;i<50000;i++){//Copy the original database into the attacked database
+            for(int j = 0;j<d.d.size();j++){
+                datatmp.d.get(j).add(d.d.get(j).get(i));
+            }
+        }
+
+        HashSet<Integer> set = select_insetred_tuple(d);
+
+        for(int i : set){
+            for(int j = 0;j<d.d.size();j++){
+                datatmp.d.get(j).add(d.d.get(j).get(i));
+            }
+        }
+
+        Util.toCsv("attacked dataset\\" + "attack" + databaseName,datatmp);
+    }
+
+    public static void alterAttack(String databaseName,double rate) throws SQLException, IOException, JWNLException, CsvValidationException, JWNLException {
+        ModifiedData d = new ModifiedData("dataset\\"+databaseName,'a',50000);//read in data
+        HashSet<Integer> set = select_tuple(d,rate);
+        SemanticUtils utils = new SemanticUtils();
+        for(int i : set){//Delete all tuples except for the select
+            utils.synonymSubstitution(d,i);
+            d.d.get(0).set(i,Util.getRandomAlphaString(10));
+            d.d.get(1).set(i,Util.getRandomAlphaString(10));
+            d.d.get(2).set(i,Util.getRandomAlphaString(10));
+
+        }
+        Util.toCsv("attacked database\\" + "attack" + databaseName,d);
+    }
+
+
 }
 
 class ModifiedData{
@@ -219,6 +307,25 @@ class ModifiedData{
                 for(int k = 0;k<data.dataFre.get(i).get(j);k++) {
                     d.get(i).add(data.dataValue.get(i).get(j));
                 }
+            }
+        }
+    }
+
+    public ModifiedData(String str, char ch, int num) throws SQLException, IOException, CsvValidationException {
+        Reader reader = Files.newBufferedReader(Paths.get(str));
+        CSVReader csvReader = new CSVReader(reader);
+        String[] record;
+        record = csvReader.readNext();
+        int[] Attrs = {1,2,8,9};
+
+        d = new Vector<>(Attrs.length);
+        for(int i = 0;i< Attrs.length;i++){//Initialize d
+            d.add(new Vector<>());
+        }
+
+        while ((record = csvReader.readNext()) != null) {
+            for(int t = 0; t<Attrs.length;t++){
+                d.get(t).add(record[Attrs[t]]);
             }
         }
     }

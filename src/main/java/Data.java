@@ -80,6 +80,54 @@ public class Data {
     }
 
     /**
+     * textual dataset
+     */
+    public Data(String filePath, int cls,int num) throws IOException, CsvValidationException {
+        Reader reader = Files.newBufferedReader(Paths.get(filePath));
+        CSVReader csvReader = new CSVReader(reader);
+        String[] record;
+        dataFre = new Vector<>();
+        dataValue = new Vector<>();
+        record = csvReader.readNext();
+
+        int[] Attrs = {1,2,8,9};
+
+        Vector<Map<String,Integer>> mapTmp = new Vector<>();
+        for(int i = 0;i<Attrs.length;i++){
+            mapTmp.add(new HashMap<>());
+        }
+        int t = 0;
+        while((record = csvReader.readNext()) != null){//将数据读入为直方图形式
+            if(t++ == num){
+                break;
+            }
+            long stime = System.currentTimeMillis();
+            for(int i = 0;i<Attrs.length;i++){
+                if(mapTmp.get(i).get(record[Attrs[i]])==null){
+                    mapTmp.get(i).put(record[Attrs[i]],1);
+                }
+                else{
+                    mapTmp.get(i).put(record[Attrs[i]],mapTmp.get(i).get(record[Attrs[i]])+1);
+                }
+            }
+            long etime = System.currentTimeMillis();
+            All_size++;
+        }
+
+        for(int i = 0;i<mapTmp.size();i++){
+            Vector<Integer> Fretmp = new Vector<>();
+            Vector<String> Valuetmp = new Vector<>();
+            for(Map.Entry<String, Integer> entry : mapTmp.get(i).entrySet()){
+                Fretmp.add(entry.getValue());
+                Valuetmp.add(entry.getKey());
+            }
+            dataFre.add(Fretmp);
+            dataValue.add(Valuetmp);
+        }
+
+    }
+
+    /**
      * Sort by frequency
      */
     public void sortVectors() {

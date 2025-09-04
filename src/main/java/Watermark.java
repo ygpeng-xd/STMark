@@ -1,4 +1,5 @@
 import com.opencsv.exceptions.CsvValidationException;
+import net.didion.jwnl.JWNLException;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -297,7 +298,7 @@ public class Watermark {
                 Vector<StringBuffer> Code = getAllVeri(totalGroups,partitions,parameters,d,watermark);
 
                 {
-                      attack.deleteAttackwithOutSQL(fileName,ratio);
+                      attack.deleteAttackwithOutSQL(file,ratio);
                       d = new Data("attacked database\\attack"+fileName);
                  }
 
@@ -484,7 +485,8 @@ public class Watermark {
                 Vector<StringBuffer> Code = getAllVeri(totalGroups,partitions,parameters,d,watermark);
 
                 {
-                    d = attack.alterFreAttackwithOutSQL(d,ratio);
+                    attack.altAttackwithPK(d,fileName,ratio);
+                    d = new Data("attacked database\\attack"+fileName);
                 }
 
                 String result = decodeWatermark(d,Key2,parameters,Code,watermark.length());
@@ -502,6 +504,261 @@ public class Watermark {
                 System.out.println(count);
             }
             System.out.println("attack ratio" + ratio + "WMR="+all_res/(wLen*10.0));
+            all_res = 0;
+        }
+    }
+
+    @Test
+    public void embeddingWatermarkforAFRDeletionAttack() throws IOException, NoSuchAlgorithmException, CsvValidationException, SQLException, JWNLException {
+        double[] ratios = {0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.95,0.99};
+        for(double ratio : ratios) {
+            for(int c = 0;c<10;c++){
+                String file = "dataset\\Reviews.csv";
+                String fileName = "Review.csv";
+                Data d = new Data(file,1,50000);
+                String watermark = generateWatermark(1000);
+
+                Vector<Parameters> parameters = new Vector<>();
+
+                // numerator
+                double numeratorInner = 0.5 * (1.0 - Math.sqrt(9.5481 / (1000 + 9.5481)));
+                double numerator = Math.log(numeratorInner); // 以自然对数为底
+
+                // denominator
+                double logBase = 1.0 - 1.0 / 1000;
+                double denominator = Math.log(logBase);
+
+                parameters.add(new Parameters("xidian", (int) (d.dataValue.get(0).size()/(numerator/denominator)),100));
+                parameters.add(new Parameters("xidian", (int) (d.dataValue.get(1).size()/(numerator/denominator)),100));
+                parameters.add(new Parameters("xidian", (int) (d.dataValue.get(2).size()/(numerator/denominator)),100));
+                parameters.add(new Parameters("xidian", (int) (d.dataValue.get(3).size()/(numerator/denominator)),100));
+                Vector<Vector<Vector<Integer>>> partitions = getAllPartitions(parameters,d,"西电");
+
+                int totalGroups = 0;
+                for (int i = 0; i < parameters.size(); i++) {
+                    totalGroups += parameters.get(i).getM();
+                }
+
+
+                Vector<StringBuffer> Code = getAllVeri(totalGroups, partitions, parameters, d, watermark);
+
+
+
+                {
+                    attack.deleteAttackwithOutSQL(fileName,d,ratio);
+                    d = new Data("attacked dataset\\attack"+fileName);
+                }
+
+                String result = decodeWatermark(d, "西电", parameters, Code,  watermark.length());
+
+
+                if (result.equals(watermark)) {
+                    System.out.println("success");
+                }
+
+                int count = 0;
+                for (int i = 0; i < 1000; i++) {
+                    if (result.charAt(i) == watermark.charAt(i)) {
+                        count++;
+                    }
+                }
+                all_res+=count;
+
+                System.out.println(count);
+            }
+            System.out.println("ratio"+ratio + ":" + all_res/10000.0);
+            all_res = 0;
+        }
+    }
+
+
+    @Test
+    public void embeddingWatermarkforAFRInsertionAttack() throws IOException, NoSuchAlgorithmException, CsvValidationException, SQLException, JWNLException {
+        double[] ratios = {0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0};
+        for(double ratio : ratios) {
+            for(int c = 0;c<10;c++){
+                String file = "dataset\\Reviews.csv";
+                String fileName = "Reviews.csv";
+                Data d = new Data(file,1,50000);
+                String watermark = generateWatermark(1000);
+
+                Vector<Parameters> parameters = new Vector<>();
+
+                // numerator
+                double numeratorInner = 0.5 * (1.0 - Math.sqrt(9.5481 / (1000 + 9.5481)));
+                double numerator = Math.log(numeratorInner); // 以自然对数为底
+
+                // denominator
+                double logBase = 1.0 - 1.0 / 1000;
+                double denominator = Math.log(logBase);
+
+                parameters.add(new Parameters("xidian", (int) (d.dataValue.get(0).size()/(numerator/denominator)),100));
+                parameters.add(new Parameters("xidian", (int) (d.dataValue.get(1).size()/(numerator/denominator)),100));
+                parameters.add(new Parameters("xidian", (int) (d.dataValue.get(2).size()/(numerator/denominator)),100));
+                parameters.add(new Parameters("xidian", (int) (d.dataValue.get(3).size()/(numerator/denominator)),100));
+                Vector<Vector<Vector<Integer>>> partitions = getAllPartitions(parameters,d,"西电");
+
+                int totalGroups = 0;
+                for (int i = 0; i < parameters.size(); i++) {
+                    totalGroups += parameters.get(i).getM();
+                }
+
+
+                Vector<StringBuffer> Code = getAllVeri(totalGroups, partitions, parameters, d, watermark);
+
+
+
+                {
+                    attack.insertAttackWithoutSQL(fileName,ratio);
+                    d = new Data("attacked dataset\\attack"+fileName);
+                }
+
+                String result = decodeWatermark(d, "西电", parameters, Code,  watermark.length());
+
+
+                if (result.equals(watermark)) {
+                    System.out.println("success");
+                }
+
+                int count = 0;
+                for (int i = 0; i < 1000; i++) {
+                    if (result.charAt(i) == watermark.charAt(i)) {
+                        count++;
+                    }
+                }
+                all_res+=count;
+
+                System.out.println(count);
+            }
+            System.out.println("ratio"+ratio + ":" + all_res/10000.0);
+            all_res = 0;
+        }
+    }
+
+
+    @Test
+    public void embeddingWatermarkforAFRAlterationAttack() throws IOException, NoSuchAlgorithmException, CsvValidationException, SQLException, JWNLException {
+        double[] ratios = {0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.95,0.99};
+        for(double ratio : ratios) {
+            for(int c = 0;c<10;c++){
+                String file = "dataset\\Reviews.csv";
+                String fileName = "Reviews.csv";
+                Data d = new Data(file,1,50000);
+                String watermark = generateWatermark(1000);
+
+                Vector<Parameters> parameters = new Vector<>();
+
+                // numerator
+                double numeratorInner = 0.5 * (1.0 - Math.sqrt(9.5481 / (1000 + 9.5481)));
+                double numerator = Math.log(numeratorInner); // 以自然对数为底
+
+                // denominator
+                double logBase = 1.0 - 1.0 / 1000;
+                double denominator = Math.log(logBase);
+
+                parameters.add(new Parameters("xidian", (int) (d.dataValue.get(0).size()/(numerator/denominator)),100));
+                parameters.add(new Parameters("xidian", (int) (d.dataValue.get(1).size()/(numerator/denominator)),100));
+                parameters.add(new Parameters("xidian", (int) (d.dataValue.get(2).size()/(numerator/denominator)),100));
+                parameters.add(new Parameters("xidian", (int) (d.dataValue.get(3).size()/(numerator/denominator)),100));
+                Vector<Vector<Vector<Integer>>> partitions = getAllPartitions(parameters,d,"西电");
+
+                int totalGroups = 0;
+                for (int i = 0; i < parameters.size(); i++) {
+                    totalGroups += parameters.get(i).getM();
+                }
+
+
+                Vector<StringBuffer> Code = getAllVeri(totalGroups, partitions, parameters, d, watermark);
+
+
+
+                {
+                    attack.alterAttack(fileName,ratio);
+                    d = new Data("attacked dataset\\attack"+fileName);
+                }
+
+                String result = decodeWatermark(d, "西电", parameters, Code,  watermark.length());
+
+
+                if (result.equals(watermark)) {
+                    System.out.println("success");
+                }
+
+                int count = 0;
+                for (int i = 0; i < 1000; i++) {
+                    if (result.charAt(i) == watermark.charAt(i)) {
+                        count++;
+                    }
+                }
+                all_res+=count;
+
+                System.out.println(count);
+            }
+            System.out.println("ratio"+ratio + ":" + all_res/10000.0);
+            all_res = 0;
+        }
+    }
+
+
+    @Test
+    public void embeddingWatermarkforAFRPKAlterationAttack() throws IOException, NoSuchAlgorithmException, CsvValidationException, SQLException, JWNLException {
+        double[] ratios = {0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.95,0.99};
+        for(double ratio : ratios) {
+            for(int c = 0;c<10;c++){
+                String file = "dataset\\Reviews.csv";
+                String fileName = "Reviews.csv";
+                Data d = new Data(file,1,50000);
+                String watermark = generateWatermark(1000);
+
+                Vector<Parameters> parameters = new Vector<>();
+
+                // numerator
+                double numeratorInner = 0.5 * (1.0 - Math.sqrt(9.5481 / (1000 + 9.5481)));
+                double numerator = Math.log(numeratorInner); // 以自然对数为底
+
+                // denominator
+                double logBase = 1.0 - 1.0 / 1000;
+                double denominator = Math.log(logBase);
+
+                parameters.add(new Parameters("xidian", (int) (d.dataValue.get(0).size()/(numerator/denominator)),100));
+                parameters.add(new Parameters("xidian", (int) (d.dataValue.get(1).size()/(numerator/denominator)),100));
+                parameters.add(new Parameters("xidian", (int) (d.dataValue.get(2).size()/(numerator/denominator)),100));
+                parameters.add(new Parameters("xidian", (int) (d.dataValue.get(3).size()/(numerator/denominator)),100));
+                Vector<Vector<Vector<Integer>>> partitions = getAllPartitions(parameters,d,"西电");
+
+                int totalGroups = 0;
+                for (int i = 0; i < parameters.size(); i++) {
+                    totalGroups += parameters.get(i).getM();
+                }
+
+
+                Vector<StringBuffer> Code = getAllVeri(totalGroups, partitions, parameters, d, watermark);
+
+
+
+                {
+                    attack.altAttackwithPK1(d,fileName,ratio);
+                    d = new Data("attacked dataset\\attack"+fileName);
+                }
+
+                String result = decodeWatermark(d, "西电", parameters, Code,  watermark.length());
+
+
+                if (result.equals(watermark)) {
+                    System.out.println("success");
+                }
+
+                int count = 0;
+                for (int i = 0; i < 1000; i++) {
+                    if (result.charAt(i) == watermark.charAt(i)) {
+                        count++;
+                    }
+                }
+                all_res+=count;
+
+                System.out.println(count);
+            }
+            System.out.println("ratio"+ratio + ":" + all_res/10000.0);
             all_res = 0;
         }
     }

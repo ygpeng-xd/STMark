@@ -171,7 +171,7 @@ mvn install:install-file -DgroupId=“com.example” -DartifactId=“ws4j” -Dv
 
 Due to GitHub's 25MB limit for individual files, we have split the dataset during upload. Before running the project, the datasets need to be merged and placed in the `dataset` folder. The dataset merging script is located at `src\main\java\Merge\merge.java`.
 
-![image-20250905102447787](img\1.png)
+![image-20250905102447787](img/1.png)
 
 
 
@@ -181,7 +181,7 @@ Due to GitHub's 25MB limit for individual files, we have split the dataset durin
 
 You can run the experiments you want to test in `src\main\java\test.java`.（Because the operation of Synonym substitution is rather time-consuming, Synonym substitution attacks take a long time）
 
-![image-20250905102759014](img\2.png)
+![image-20250905102759014](img/2.png)
 
 
 

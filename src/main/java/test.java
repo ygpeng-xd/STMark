@@ -29,9 +29,9 @@ public class test {
     public void test_AFR() throws CsvValidationException, SQLException, IOException, NoSuchAlgorithmException, JWNLException {
         Watermark wm = new Watermark();
         //wm.embeddingWatermarkforAFRDeletionAttack();//deletion attack
-        //wm.embeddingWatermarkforAFRInsertionAttack();//Insertion Attack
+        wm.embeddingWatermarkforAFRInsertionAttack();//Insertion Attack
        // wm.embeddingWatermarkforAFRAlterationAttack();//Synonym substitution attack
-        wm.embeddingWatermarkforAFRPKAlterationAttack();//PK Alteration
+       // wm.embeddingWatermarkforAFRPKAlterationAttack();//PK Alteration
 
     }
 }

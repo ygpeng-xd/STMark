@@ -210,10 +210,9 @@ public class attack {
         return;
     }
 
-    static HashSet<Integer> select_insetred_tuple(ModifiedData d){
+    static HashSet<Integer> select_insetred_tuple(ModifiedData d, double rate){
         //In deletion attacks, the proportion indicated for deletion in the deletion attack,
         //In modification attacks, the proportion indicated for not modified in the modification attack
-        double rate = 1.0;
 
         //tuple_num is the number of tuples retained in the deletion attack and the number of tuples modified in the modification attack.
         int tuple_num = (int)(rate*50000);
@@ -245,7 +244,7 @@ public class attack {
             }
         }
 
-        HashSet<Integer> set = select_insetred_tuple(d);
+        HashSet<Integer> set = select_insetred_tuple(d,rate);
 
         for(int i : set){
             for(int j = 0;j<d.d.size();j++){

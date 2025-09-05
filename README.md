@@ -10,13 +10,13 @@
 
 ## Introduction
 
-STMark is a zero-distortion robust database watermarking technique designed to provide copyright protection for datasets where any modification is strictly prohibited. It ensures that embedding watermarks does not affect the accuracy or availability of the data, making it suitable for high-accuracy applications such as governmental applications, medical applications, etc.
+STMark is a zero-distortion robust database watermarking technique designed to provide copyright protection for datasets where any modification is strictly prohibited. It ensures that embedding watermarks does not affect the accuracy or availability of the data, making it suitable for high-accuracy applications such as governmental applications, medical applications, etc.   It overcomes the reliance of existing watermarking schemes on specific data characteristics, such as structural characteristics or distribution characteristics, extending its applicability to all scalar and textual (ST) data.
 
 ## Features
 
 - ***Broader applicability:*** STMark does not depend on primary keys and is compatible to all ST data. Compared with traditional schemes, STMark is adapted to broader application scenarios. To our knowledge, STMark is the first scheme to achieve such applicability.
-- ***Zero-distortion:*** STMark embeds watermarks by extracting features and generating a mask for each partition, without making any modifications to the original data,  preserving full availability.  To our knowledge, STMark is the first scheme to truly achieve zero-distortion robust database watermarking.
-- ***Automated parameter tuning:*** Unlike traditional robust watermarking schemes, STMark abandons the costly manual parameter tuning and a designs heuristic parameter generation method by identifying intrinsic relationships among parameters and dataset characteristics.
+- ***Zero-distortion:*** STMark embeds watermarks by extracting features and generating a mask for each partition, without making any modifications to the original data,  preserving full availability.  To our knowledge, STMark is the first scheme to truly achieve zero-distortion robust watermarking for ST data.
+- ***Automated parameter tuning:*** Unlike traditional robust watermarking schemes, STMark abandons the costly manual parameter tuning and designs a heuristic parameter generation method by identifying intrinsic relationships among parameters and dataset characteristics.
 
 ## PRELIMINARIES
 
@@ -57,7 +57,7 @@ Before using this project, ensure that your environment meets the following requ
 
 ###### Maven configuration
 
-To set up the project, ensure that your `pom.xml` file includes the necessary dependencies.  You can add the following dependencies in your `pom.xml`. If you do not intend to test modification attacks on text databases (which require synonym substitution), please remove the three marked dependencies in `pom.xml` ,delete the corresponding synonym-based alteration attack code, and then skip directly to the [Dataset Preparation](#dataset-preparation).
+To set up the project, ensure that your `pom.xml` file includes the necessary dependencies.  You can add the following dependencies in your `pom.xml`.
 
 
 
@@ -179,7 +179,7 @@ Due to GitHub's 25MB limit for individual files, we have split the dataset durin
 
 ###### Running the Project
 
-You can run the experiments you want to test in test.java.（Because the operation of synonym replacement is rather time-consuming, synonym replacement attacks take a long time）
+You can run the experiments you want to test in `src\main\java\test.java`.（Because the operation of Synonym substitution is rather time-consuming, Synonym substitution attacks take a long time）
 
 ![image-20250905102759014](img\2.png)
 

@@ -299,7 +299,7 @@ public class Watermark {
 
                 {
                       attack.deleteAttackwithOutSQL(file,ratio);
-                      d = new Data("attacked database\\attack"+fileName);
+                      d = new Data("attacked dataset\\attack"+fileName);
                  }
 
                 String result = decodeWatermark(d,Key2,parameters,Code,watermark.length());
@@ -364,7 +364,7 @@ public class Watermark {
 
                 {
                     attack.alterRandomAttackwithOutSQL(fileName,d,ratio);
-                    d = new Data("attacked database\\attack"+fileName);
+                    d = new Data("attacked dataset\\attack"+fileName);
                 }
 
                 String result = decodeWatermark(d,Key2,parameters,Code,watermark.length());
@@ -486,7 +486,7 @@ public class Watermark {
 
                 {
                     attack.altAttackwithPK(d,fileName,ratio);
-                    d = new Data("attacked database\\attack"+fileName);
+                    d = new Data("attacked dataset\\attack"+fileName);
                 }
 
                 String result = decodeWatermark(d,Key2,parameters,Code,watermark.length());

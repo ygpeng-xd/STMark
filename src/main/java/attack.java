@@ -127,7 +127,7 @@ public class attack {
             }
         }
 
-        Util.toCsv("attacked database\\" + "attack" + databaseName,d);
+        Util.toCsv("attacked dataset\\" + "attack" + databaseName,d);
     }
 
     public static Data alterFreAttackwithOutSQL(Data d,double ratio) throws SQLException, CsvValidationException, IOException {
@@ -193,7 +193,7 @@ public class attack {
             d.d.get(2).set(i, String.valueOf(random.nextInt(1000000000)));
 
         }
-        Util.toCsv("attacked database\\" + "attack" + databaseName,d);
+        Util.toCsv("attacked dataset\\" + "attack" + databaseName,d);
         return;
     }
 
@@ -266,7 +266,7 @@ public class attack {
             d.d.get(2).set(i,Util.getRandomAlphaString(10));
 
         }
-        Util.toCsv("attacked database\\" + "attack" + databaseName,d);
+        Util.toCsv("attacked dataset\\" + "attack" + databaseName,d);
     }
 
 

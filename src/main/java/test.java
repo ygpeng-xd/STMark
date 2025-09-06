@@ -19,9 +19,9 @@ public class test {
     @Test
     public void test_geographic() throws CsvValidationException, SQLException, IOException, NoSuchAlgorithmException {
         Watermark wm = new Watermark();
-        wm.embeddingWatermarkforGeographicDeletionAttack();//deletion attack
+        //wm.embeddingWatermarkforGeographicDeletionAttack();//deletion attack
         //wm.embeddingWatermarkforGeographicRandomAlterationAttack();//Random Alteration Attack,
-        //wm.embeddingWatermarkforGeographicHighFreAlterationAttack();//high-frequency attr Attack,
+        wm.embeddingWatermarkforGeographicHighFreAlterationAttack();//high-frequency attr Attack,
         //wm.embeddingWatermarkforGeographicPKAlterationAttack();//PK Alteration Attack
     }
 

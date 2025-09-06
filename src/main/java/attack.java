@@ -130,9 +130,8 @@ public class attack {
         Util.toCsv("attacked dataset\\" + "attack" + databaseName,d);
     }
 
-    public static Data alterFreAttackwithOutSQL(Data d,double ratio) throws SQLException, CsvValidationException, IOException {
+    public static Data alterFreAttackwithOutSQL(Data d,double r) throws SQLException, CsvValidationException, IOException {
         Random rand = new Random();
-        double r = 0.99;
         d.sortVectors();
         for(int i = 0;i<d.dataFre.size();i++){
             int count = 0;

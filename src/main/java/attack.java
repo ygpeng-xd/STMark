@@ -67,7 +67,7 @@ public class attack {
      */
     public static void deleteAttackwithOutSQL(String databaseName,double rate) throws SQLException, CsvValidationException, IOException {
 
-        ModifiedData d = new ModifiedData(databaseName,'a');//read in data
+        ModifiedData d = new ModifiedData("dataset\\"+databaseName,'a');//read in data
         HashSet<Integer> set = select_tuple(d,rate);
         ModifiedData datatmp = new ModifiedData(d.d.size(),set.size());
 

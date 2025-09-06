@@ -298,7 +298,7 @@ public class Watermark {
                 Vector<StringBuffer> Code = getAllVeri(totalGroups,partitions,parameters,d,watermark);
 
                 {
-                      attack.deleteAttackwithOutSQL(file,ratio);
+                      attack.deleteAttackwithOutSQL(fileName,ratio);
                       d = new Data("attacked dataset\\attack"+fileName);
                  }
 
